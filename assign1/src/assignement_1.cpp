@@ -7,6 +7,7 @@
 using namespace std;
 
 #define SYSTEMTIME clock_t
+
  
 void OnMult(int m_ar, int m_br) 
 {
@@ -62,6 +63,7 @@ void OnMult(int m_ar, int m_br)
     free(phb);
     free(phc);
 }
+ 
 
 // Line-by-line matrix multiplication
 void OnMultLine(int m_ar, int m_br)
@@ -179,41 +181,16 @@ void OnMultBlock(int m_ar, int m_br, int bkSize)
 }
 
 
-int main(int argc, char *argv[])
-{
-    int lin, col, blockSize;
-    int op;
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        cerr << "Usage: " << argv[0] << " <matrix_size> <block_size>" << endl;
+        return 1;
+    }
+    int size   = atoi(argv[1]);
+    int bkSize = atoi(argv[2]);
 
-    do {
-        cout << endl << "1. Multiplication" << endl;
-        cout << "2. Line Multiplication" << endl;
-        cout << "3. Block Multiplication" << endl;
-        cout << "0. Exit" << endl;
-        cout << "Selection?: ";
-        cin >> op;
-
-        if (op == 0)
-            break;
-
-        cout << "Dimensions: lins=cols ? ";
-        cin >> lin;
-        col = lin;
-
-        switch (op) {
-            case 1:
-                OnMult(lin, col);
-                break;
-            case 2:
-                OnMultLine(lin, col);
-                break;
-            case 3:
-                cout << "Block Size? ";
-                cin >> blockSize;
-                OnMultBlock(lin, col, blockSize);
-                break;
-        }
-
-    } while (op != 0);
-
+    cout << "Running OnMultBlock with size " << size << "x" << size
+         << ", block size " << bkSize << endl;
+    OnMultBlock(size, size, bkSize);
     return 0;
 }
