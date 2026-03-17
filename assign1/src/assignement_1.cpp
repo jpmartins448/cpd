@@ -66,7 +66,7 @@ void OnMult(int m_ar, int m_br)
  
 
 // Line-by-line matrix multiplication
-void OnMultLine(int m_ar, int m_br)
+double OnMultLine(int m_ar, int m_br)
 {
     SYSTEMTIME Time1, Time2;
     
@@ -80,28 +80,36 @@ void OnMultLine(int m_ar, int m_br)
     phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
     phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
 
-    for(i = 0; i < m_ar; i++)
-        for(j = 0; j < m_ar; j++)
+    for(i = 0; i < m_ar; i++){
+        for(j = 0; j < m_ar; j++){
             pha[i*m_ar + j] = 1.0;
+            phc[i*m_ar + j] = 0.0;
+        }
+    }
 
-    for(i = 0; i < m_br; i++)
-        for(j = 0; j < m_br; j++)
+    for(i = 0; i < m_br; i++){
+        for(j = 0; j < m_br; j++){
             phb[i*m_br + j] = (double)(i + 1);
+        }
 
+    }
+
+    
     Time1 = clock();
 
-    for(int i = 0; i < m_br; i++){
-        for(int k = 0; k < m_ar; k++){
-            double temp = pha[i*m_ar + k];
-            for(int j = 0; j < m_br; j++){
-                phc[i*m_ar + j] += temp * phb[k*m_ar+j];
+    for(i = 0; i < m_ar; i++)
+    {
+        for(j = 0; j < m_ar; j++)
+        {
+            for (k=0; k < m_ar; k++){
+                phc[i*m_ar + k]+= pha[i*m_ar + j]*phb[j*m_ar + k];
             }
         }
     }
-    
+
     Time2 = clock();
-    snprintf(st, sizeof(st), "Time: %3.3f seconds\n",
-         (double)(Time2 - Time1) / CLOCKS_PER_SEC);
+    double elapsed = (double)(Time2 - Time1) / CLOCKS_PER_SEC;
+    snprintf(st, sizeof(st), "Time: %3.3f seconds\n", elapsed);
     cout << st;
 
     cout << "Result matrix: " << endl;
@@ -115,6 +123,8 @@ void OnMultLine(int m_ar, int m_br)
     free(pha);
     free(phb);
     free(phc);
+    return elapsed;
+   
 }
 
 
@@ -183,14 +193,14 @@ void OnMultBlock(int m_ar, int m_br, int bkSize)
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
-        cerr << "Usage: " << argv[0] << " <matrix_size> <block_size>" << endl;
+        cerr << "Usage: " << argv[0] << " <matrix_size> " << endl;
         return 1;
     }
     int size   = atoi(argv[1]);
     int bkSize = atoi(argv[2]);
 
     cout << "Running OnMultBlock with size " << size << "x" << size
-         << ", block size " << bkSize << endl;
-    OnMultBlock(size, size, bkSize);
+        << endl;
+    OnMultLine(size, size);
     return 0;
 }

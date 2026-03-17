@@ -107,4 +107,4 @@ def onMultBlock(m_ar, m_br, bk_size):
         print(phc[j], end=" ")
     print()
 
-onMultBlock(1024, 1024, 64)
+on_mult(3072, 3072)
