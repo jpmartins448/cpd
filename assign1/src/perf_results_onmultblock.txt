@@ -914,14 +914,114 @@ Result matrix:
 Matrix size: 10240x10240, Block size: 128
 ======================================
 Running OnMultBlock with size 10240x10240, block size 128
+Time: 350.645 seconds
+Result matrix: 
+5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 
+
+ Performance counter stats for './assignement_1 10240 128':
+
+ 1,173,697,101,580      cpu_atom/cycles/                                                        (0.04%)
+ 1,710,086,628,507      cpu_core/cycles/                                                        (49.98%)
+ 3,441,879,775,062      cpu_atom/instructions/           #    2.93  insn per cycle              (0.04%)
+ 7,616,938,034,908      cpu_core/instructions/           #    4.45  insn per cycle              (59.98%)
+     3,014,075,557      cpu_atom/cache-references/                                              (0.04%)
+    10,200,906,161      cpu_core/cache-references/                                              (69.97%)
+     1,176,468,630      cpu_atom/cache-misses/           #   39.03% of all cache refs           (0.04%)
+     1,291,768,646      cpu_core/cache-misses/           #   12.66% of all cache refs           (79.97%)
+   975,090,562,718      cpu_atom/L1-dcache-loads/                                               (0.04%)
+ 2,158,751,642,084      cpu_core/L1-dcache-loads/                                               (79.97%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    29,951,589,745      cpu_core/L1-dcache-load-misses/  #    1.39% of all L1-dcache accesses   (79.97%)
+       361,077,467      cpu_atom/LLC-loads/                                                     (0.04%)
+       576,435,031      cpu_core/LLC-loads/                                                     (79.97%)
+         4,544,808      cpu_atom/LLC-load-misses/        #    1.26% of all LL-cache accesses    (0.04%)
+        25,780,387      cpu_core/LLC-load-misses/        #    4.47% of all LL-cache accesses    (79.97%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+    29,022,712,513      cpu_core/mem_load_retired.l1_miss/                                        (39.98%)
+       571,868,512      cpu_core/mem_load_retired.l2_miss/                                        (39.98%)
+
+     351.323435798 seconds time elapsed
+
+     350.727344000 seconds user
+       0.522893000 seconds sys
+
+
 
 ======================================
 Matrix size: 10240x10240, Block size: 256
 ======================================
 Running OnMultBlock with size 10240x10240, block size 256
+Time: 353.715 seconds
+Result matrix: 
+5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 
+
+ Performance counter stats for './assignement_1 10240 256':
+
+ 1,130,031,632,854      cpu_atom/cycles/                                                        (0.02%)
+ 1,729,585,506,220      cpu_core/cycles/                                                        (49.99%)
+ 3,390,816,298,352      cpu_atom/instructions/           #    3.00  insn per cycle              (0.02%)
+ 7,572,624,732,143      cpu_core/instructions/           #    4.38  insn per cycle              (59.99%)
+     3,940,812,423      cpu_atom/cache-references/                                              (0.02%)
+   222,869,323,074      cpu_core/cache-references/                                              (69.98%)
+     1,229,681,402      cpu_atom/cache-misses/           #   31.20% of all cache refs           (0.02%)
+     1,420,095,904      cpu_core/cache-misses/           #    0.64% of all cache refs           (79.98%)
+   964,672,336,349      cpu_atom/L1-dcache-loads/                                               (0.02%)
+ 2,154,174,291,063      cpu_core/L1-dcache-loads/                                               (79.98%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    65,687,813,498      cpu_core/L1-dcache-load-misses/  #    3.05% of all L1-dcache accesses   (79.98%)
+       600,377,833      cpu_atom/LLC-loads/                                                     (0.02%)
+    13,558,403,959      cpu_core/LLC-loads/                                                     (79.98%)
+        22,993,156      cpu_atom/LLC-load-misses/        #    3.83% of all LL-cache accesses    (0.02%)
+        64,101,554      cpu_core/LLC-load-misses/        #    0.47% of all LL-cache accesses    (79.98%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+    67,584,779,246      cpu_core/mem_load_retired.l1_miss/                                        (39.99%)
+    13,680,686,219      cpu_core/mem_load_retired.l2_miss/                                        (39.99%)
+
+     354.401891818 seconds time elapsed
+
+     353.791145000 seconds user
+       0.535886000 seconds sys
+
+
 
 ======================================
 Matrix size: 10240x10240, Block size: 512
 ======================================
 Running OnMultBlock with size 10240x10240, block size 512
+Time: 321.389 seconds
+Result matrix: 
+5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 5.24339e+07 
+
+ Performance counter stats for './assignement_1 10240 512':
+
+ 1,144,847,837,455      cpu_atom/cycles/                                                        (0.01%)
+ 1,630,949,178,856      cpu_core/cycles/                                                        (49.99%)
+ 3,417,441,790,713      cpu_atom/instructions/           #    2.99  insn per cycle              (0.01%)
+ 7,546,367,818,077      cpu_core/instructions/           #    4.63  insn per cycle              (59.99%)
+    69,756,633,537      cpu_atom/cache-references/                                              (0.01%)
+   180,817,391,160      cpu_core/cache-references/                                              (69.99%)
+       518,269,062      cpu_atom/cache-misses/           #    0.74% of all cache refs           (0.01%)
+       797,218,118      cpu_core/cache-misses/           #    0.44% of all cache refs           (79.99%)
+   974,287,666,262      cpu_atom/L1-dcache-loads/                                               (0.01%)
+ 2,151,944,420,292      cpu_core/L1-dcache-loads/                                               (79.99%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    84,015,175,848      cpu_core/L1-dcache-load-misses/  #    3.90% of all L1-dcache accesses   (79.99%)
+     7,405,308,397      cpu_atom/LLC-loads/                                                     (0.01%)
+     6,941,558,631      cpu_core/LLC-loads/                                                     (79.99%)
+        56,448,303      cpu_atom/LLC-load-misses/        #    0.76% of all LL-cache accesses    (0.01%)
+        94,948,714      cpu_core/LLC-load-misses/        #    1.37% of all LL-cache accesses    (79.99%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+    84,755,535,019      cpu_core/mem_load_retired.l1_miss/                                        (40.00%)
+     7,006,343,216      cpu_core/mem_load_retired.l2_miss/                                        (40.00%)
+
+     322.068740616 seconds time elapsed
+
+     321.472648000 seconds user
+       0.523882000 seconds sys
+
+
+
 
