@@ -107,4 +107,4 @@ def onMultBlock(m_ar, m_br, bk_size):
         print(phc[j], end=" ")
     print()
 
-on_mult(3072, 3072)
+onMultLine(3072, 3072)
