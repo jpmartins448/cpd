@@ -1,0 +1,222 @@
+======================================
+Method: OnMultLine | Size: 8192x8192 | Threads: 4
+======================================
+Parallel Time: 106.526 s
+Result matrix: 
+3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 
+
+ Performance counter stats for './assignement_2 2 8192':
+
+ 1,112,644,357,237      cpu_atom/cycles/                                                        (0.06%)
+ 1,469,677,256,575      cpu_core/cycles/                                                        (49.97%)
+ 2,721,161,554,854      cpu_atom/instructions/           #    2.45  insn per cycle              (0.06%)
+ 4,409,023,414,373      cpu_core/instructions/           #    3.00  insn per cycle              (59.96%)
+    38,627,720,344      cpu_atom/cache-references/                                              (0.06%)
+    72,480,859,757      cpu_core/cache-references/                                              (69.95%)
+    11,268,357,524      cpu_atom/cache-misses/           #   29.17% of all cache refs           (0.06%)
+    14,159,497,463      cpu_core/cache-misses/           #   19.54% of all cache refs           (79.95%)
+   680,221,340,885      cpu_atom/L1-dcache-loads/                                               (0.06%)
+ 1,101,815,796,475      cpu_core/L1-dcache-loads/                                               (79.95%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    83,201,116,154      cpu_core/L1-dcache-load-misses/  #    7.55% of all L1-dcache accesses   (79.95%)
+     8,186,087,063      cpu_atom/LLC-loads/                                                     (0.06%)
+    11,799,932,216      cpu_core/LLC-loads/                                                     (79.95%)
+       144,371,222      cpu_atom/LLC-load-misses/        #    1.76% of all LL-cache accesses    (0.06%)
+     1,442,075,958      cpu_core/LLC-load-misses/        #   12.22% of all LL-cache accesses    (79.95%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+    92,543,191,462      cpu_core/mem_load_retired.l1_miss/                                        (39.97%)
+    12,035,676,068      cpu_core/mem_load_retired.l2_miss/                                        (39.97%)
+
+     106.821853593 seconds time elapsed
+
+     425.245594000 seconds user
+       0.805963000 seconds sys
+
+
+
+======================================
+Method: OnMultLine | Size: 8192x8192 | Threads: 8
+======================================
+Parallel Time: 64.6925 s
+Result matrix: 
+3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 
+
+ Performance counter stats for './assignement_2 2 8192':
+
+ 1,076,521,428,120      cpu_atom/cycles/                                                        (0.85%)
+ 1,326,530,237,379      cpu_core/cycles/                                                        (49.58%)
+ 2,842,374,485,041      cpu_atom/instructions/           #    2.64  insn per cycle              (0.85%)
+ 4,421,436,560,448      cpu_core/instructions/           #    3.33  insn per cycle              (59.49%)
+    55,226,233,157      cpu_atom/cache-references/                                              (0.85%)
+    71,143,977,716      cpu_core/cache-references/                                              (69.41%)
+    32,730,007,527      cpu_atom/cache-misses/           #   59.27% of all cache refs           (0.85%)
+     7,866,983,710      cpu_core/cache-misses/           #   11.06% of all cache refs           (79.32%)
+   710,509,764,305      cpu_atom/L1-dcache-loads/                                               (0.85%)
+ 1,105,126,831,575      cpu_core/L1-dcache-loads/                                               (79.32%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    88,528,385,235      cpu_core/L1-dcache-load-misses/  #    8.01% of all L1-dcache accesses   (79.32%)
+    12,233,355,923      cpu_atom/LLC-loads/                                                     (0.85%)
+    10,419,390,233      cpu_core/LLC-loads/                                                     (79.32%)
+     1,477,997,260      cpu_atom/LLC-load-misses/        #   12.08% of all LL-cache accesses    (0.85%)
+     1,077,271,863      cpu_core/LLC-load-misses/        #   10.34% of all LL-cache accesses    (79.32%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+    97,248,288,413      cpu_core/mem_load_retired.l1_miss/                                        (39.66%)
+    10,710,625,835      cpu_core/mem_load_retired.l2_miss/                                        (39.66%)
+
+      65.021488149 seconds time elapsed
+
+     514.624168000 seconds user
+       1.303942000 seconds sys
+
+
+
+======================================
+Method: OnMultLine | Size: 8192x8192 | Threads: 12
+======================================
+Parallel Time: 64.2359 s
+Result matrix: 
+3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 
+
+ Performance counter stats for './assignement_2 2 8192':
+
+ 1,372,083,599,938      cpu_atom/cycles/                                                        (31.20%)
+ 1,658,310,583,644      cpu_core/cycles/                                                        (34.40%)
+ 3,187,757,364,774      cpu_atom/instructions/           #    2.32  insn per cycle              (31.20%)
+ 4,959,767,922,498      cpu_core/instructions/           #    2.99  insn per cycle              (41.28%)
+    55,354,781,390      cpu_atom/cache-references/                                              (31.20%)
+    80,551,681,531      cpu_core/cache-references/                                              (48.16%)
+    31,970,938,106      cpu_atom/cache-misses/           #   57.76% of all cache refs           (31.20%)
+    11,876,520,060      cpu_core/cache-misses/           #   14.74% of all cache refs           (55.04%)
+   796,838,916,058      cpu_atom/L1-dcache-loads/                                               (31.20%)
+ 1,240,017,773,845      cpu_core/L1-dcache-loads/                                               (55.04%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    95,968,163,104      cpu_core/L1-dcache-load-misses/  #    7.74% of all L1-dcache accesses   (55.04%)
+    15,460,429,883      cpu_atom/LLC-loads/                                                     (31.20%)
+    13,986,606,670      cpu_core/LLC-loads/                                                     (55.04%)
+     1,173,857,218      cpu_atom/LLC-load-misses/        #    7.59% of all LL-cache accesses    (31.20%)
+     1,615,827,419      cpu_core/LLC-load-misses/        #   11.55% of all LL-cache accesses    (55.04%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+   107,645,383,350      cpu_core/mem_load_retired.l1_miss/                                        (27.52%)
+    14,335,479,160      cpu_core/mem_load_retired.l2_miss/                                        (27.52%)
+
+      64.536726875 seconds time elapsed
+
+     693.759347000 seconds user
+       1.411935000 seconds sys
+
+
+
+======================================
+Method: OnMultLine | Size: 8192x8192 | Threads: 16
+======================================
+Parallel Time: 61.2048 s
+Result matrix: 
+3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 
+
+ Performance counter stats for './assignement_2 2 8192':
+
+ 1,502,935,894,304      cpu_atom/cycles/                                                        (44.69%)
+ 1,842,656,200,707      cpu_core/cycles/                                                        (27.65%)
+ 2,740,122,664,107      cpu_atom/instructions/           #    1.82  insn per cycle              (44.69%)
+ 5,758,404,425,634      cpu_core/instructions/           #    3.13  insn per cycle              (33.19%)
+    27,190,511,909      cpu_atom/cache-references/                                              (44.69%)
+    93,258,707,658      cpu_core/cache-references/                                              (38.72%)
+    18,236,917,100      cpu_atom/cache-misses/           #   67.07% of all cache refs           (44.69%)
+    15,067,182,232      cpu_core/cache-misses/           #   16.16% of all cache refs           (44.25%)
+   684,968,616,845      cpu_atom/L1-dcache-loads/                                               (44.69%)
+ 1,439,232,440,142      cpu_core/L1-dcache-loads/                                               (44.25%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+   111,324,656,556      cpu_core/L1-dcache-load-misses/  #    7.74% of all L1-dcache accesses   (44.25%)
+     7,628,384,884      cpu_atom/LLC-loads/                                                     (44.69%)
+    15,527,419,579      cpu_core/LLC-loads/                                                     (44.25%)
+       287,835,216      cpu_atom/LLC-load-misses/        #    3.77% of all LL-cache accesses    (44.69%)
+     2,174,875,034      cpu_core/LLC-load-misses/        #   14.01% of all LL-cache accesses    (44.25%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+   124,418,859,741      cpu_core/mem_load_retired.l1_miss/                                        (22.12%)
+    15,952,359,754      cpu_core/mem_load_retired.l2_miss/                                        (22.12%)
+
+      61.515669823 seconds time elapsed
+
+     829.423571000 seconds user
+       1.653873000 seconds sys
+
+
+
+======================================
+Method: OnMultLine | Size: 8192x8192 | Threads: 20
+======================================
+Parallel Time: 62.3611 s
+Result matrix: 
+3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 
+
+ Performance counter stats for './assignement_2 2 8192':
+
+ 1,702,763,998,667      cpu_atom/cycles/                                                        (51.21%)
+ 2,051,144,617,766      cpu_core/cycles/                                                        (24.40%)
+ 2,455,668,020,576      cpu_atom/instructions/           #    1.44  insn per cycle              (51.21%)
+ 6,463,589,732,214      cpu_core/instructions/           #    3.15  insn per cycle              (29.28%)
+    19,861,772,639      cpu_atom/cache-references/                                              (51.21%)
+   104,339,791,170      cpu_core/cache-references/                                              (34.16%)
+    10,535,352,920      cpu_atom/cache-misses/           #   53.04% of all cache refs           (51.21%)
+    26,230,420,040      cpu_core/cache-misses/           #   25.14% of all cache refs           (39.03%)
+   613,863,340,817      cpu_atom/L1-dcache-loads/                                               (51.21%)
+ 1,616,280,588,412      cpu_core/L1-dcache-loads/                                               (39.04%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+   124,108,307,701      cpu_core/L1-dcache-load-misses/  #    7.68% of all L1-dcache accesses   (39.04%)
+     4,856,634,837      cpu_atom/LLC-loads/                                                     (51.21%)
+    16,847,169,633      cpu_core/LLC-loads/                                                     (39.03%)
+       285,557,466      cpu_atom/LLC-load-misses/        #    5.88% of all LL-cache accesses    (51.21%)
+     4,239,796,655      cpu_core/LLC-load-misses/        #   25.17% of all LL-cache accesses    (39.03%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+   138,265,148,004      cpu_core/mem_load_retired.l1_miss/                                        (19.52%)
+    17,332,872,506      cpu_core/mem_load_retired.l2_miss/                                        (19.52%)
+
+      62.672275027 seconds time elapsed
+
+     968.652193000 seconds user
+       1.937754000 seconds sys
+
+
+
+======================================
+Method: OnMultLine | Size: 8192x8192 | Threads: 24
+======================================
+Parallel Time: 57.4131 s
+Result matrix: 
+3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 3.35585e+07 
+
+ Performance counter stats for './assignement_2 2 8192':
+
+ 1,901,900,231,267      cpu_atom/cycles/                                                        (47.35%)
+ 2,243,574,256,909      cpu_core/cycles/                                                        (26.33%)
+ 2,533,227,018,878      cpu_atom/instructions/           #    1.33  insn per cycle              (47.35%)
+ 6,099,663,638,023      cpu_core/instructions/           #    2.72  insn per cycle              (31.59%)
+    19,236,053,224      cpu_atom/cache-references/                                              (47.35%)
+    83,656,489,525      cpu_core/cache-references/                                              (36.85%)
+     9,326,722,069      cpu_atom/cache-misses/           #   48.49% of all cache refs           (47.35%)
+    30,612,516,435      cpu_core/cache-misses/           #   36.59% of all cache refs           (42.12%)
+   633,265,446,222      cpu_atom/L1-dcache-loads/                                               (47.35%)
+ 1,524,760,522,319      cpu_core/L1-dcache-loads/                                               (42.12%)
+   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+    89,355,322,121      cpu_core/L1-dcache-load-misses/  #    5.86% of all L1-dcache accesses   (42.12%)
+     4,486,639,879      cpu_atom/LLC-loads/                                                     (47.35%)
+    11,372,843,265      cpu_core/LLC-loads/                                                     (42.12%)
+       234,080,633      cpu_atom/LLC-load-misses/        #    5.22% of all LL-cache accesses    (47.35%)
+     4,407,424,137      cpu_core/LLC-load-misses/        #   38.75% of all LL-cache accesses    (42.12%)
+   <not supported>      cpu_atom/stalled-cycles-backend/                                      
+   <not supported>      cpu_core/stalled-cycles-backend/                                      
+    98,329,905,529      cpu_core/mem_load_retired.l1_miss/                                        (21.06%)
+    11,683,791,551      cpu_core/mem_load_retired.l2_miss/                                        (21.06%)
+
+      57.745750865 seconds time elapsed
+
+    1092.618177000 seconds user
+       2.016487000 seconds sys
+
+
+

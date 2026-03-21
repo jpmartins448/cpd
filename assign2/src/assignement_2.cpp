@@ -32,20 +32,17 @@ void OnMult(int m_ar, int m_br)
 
     double start = omp_get_wtime();
 
-    #pragma omp parallel for collapse(2) // paraleliza i e j
-    for(i = 0; i < m_ar; i++)
-    {
-        for(j = 0; j < m_br; j++)
-        {
-            temp = 0;
-            for(k = 0; k < m_ar; k++)
-            {    
-                temp += pha[i*m_ar + k] * phb[k*m_br + j];
+    #pragma omp parallel
+    for (int i = 0; i < m_ar; i++) {
+        for (int j = 0; j < m_ar; j++) {
+            double temp = 0;
+            #pragma omp parallel for  // declared inside = private to each thread
+            for (int k = 0; k < m_ar; k++) {
+                temp += pha[i*m_ar+k] * phb[k*m_br+j];
             }
-            phc[i*m_ar + j] = temp;
+            phc[i*m_ar+j] = temp;
         }
     }
-
     double end = omp_get_wtime();
     cout << "Parallel Time: " << end - start << " s" << endl;
 
@@ -87,14 +84,12 @@ void OnMultLine(int m_ar, int m_br)
 
     double start = omp_get_wtime();
 
-    #pragma omp parallel
-    for(int i = 0; i < m_br; i++){
-        for(int k = 0; k < m_ar; k++){
-            double temp = pha[i*m_ar + k];
-
-            #pragma omp for simd
-            for(int j = 0; j < m_br; j++){
-                phc[i*m_ar + j] += temp * phb[k*m_ar+j];
+    #pragma omp parallel for collapse(2)
+    for (int i = 0; i < m_ar; i++) {
+        for (int k = 0; k < m_ar; k++) {
+            double temp = pha[i*m_ar + k];  // private to each thread
+            for (int j = 0; j < m_br; j++) {
+                phc[i*m_ar + j] += temp * phb[k*m_ar + j];
             }
         }
     }
@@ -178,39 +173,31 @@ void OnMultBlock(int m_ar, int m_br, int bkSize)
 
 int main(int argc, char *argv[])
 {
-    int lin, col, blockSize;
-    int op;
+    if (argc < 3) {
+        cout << "Usage: " << argv[0] << " <method> <size> [blockSize]" << endl;
+        cout << "  method: 1=OnMult, 2=OnMultLine, 3=OnMultBlock" << endl;
+        return 1;
+    }
 
-    do {
-        cout << endl << "1. Multiplication" << endl;
-        cout << "2. Line Multiplication" << endl;
-        cout << "3. Block Multiplication" << endl;
-        cout << "0. Exit" << endl;
-        cout << "Selection?: ";
-        cin >> op;
+    int op = atoi(argv[1]);
+    int lin = atoi(argv[2]);
+    int col = lin;
+    int blockSize = (argc >= 4) ? atoi(argv[3]) : 128;
 
-        if (op == 0)
+    switch (op) {
+        case 1:
+            OnMult(lin, col);
             break;
-
-        cout << "Dimensions: lins=cols ? ";
-        cin >> lin;
-        col = lin;
-
-        switch (op) {
-            case 1:
-                OnMult(lin, col);
-                break;
-            case 2:
-                OnMultLine(lin, col);
-                break;
-            case 3:
-                cout << "Block Size? ";
-                cin >> blockSize;
-                OnMultBlock(lin, col, blockSize);
-                break;
-        }
-
-    } while (op != 0);
+        case 2:
+            OnMultLine(lin, col);
+            break;
+        case 3:
+            OnMultBlock(lin, col, blockSize);
+            break;
+        default:
+            cout << "Invalid method." << endl;
+            return 1;
+    }
 
     return 0;
 }
