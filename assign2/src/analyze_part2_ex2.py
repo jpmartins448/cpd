@@ -13,6 +13,7 @@ import pandas as pd
 
 
 BASELINE_THREADS = 4
+THREAD_TICKS = [4, 8, 12, 16, 20, 24]
 INPUT_FILES = [
     "perf_results_onmultline_ex2_pragma_omp_parallel_for.txt",
     "perf_results_onmultline_ex2_pragma_omp_parallel_for_collapse(2).txt",
@@ -247,6 +248,15 @@ def add_incremental_metrics(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def _apply_thread_ticks(ax: plt.Axes, x_col: str) -> None:
+    """Force discrete tested thread ticks for any thread-based x-axis."""
+    if x_col != "threads":
+        return
+
+    ax.set_xticks(THREAD_TICKS)
+    ax.set_xticklabels([str(t) for t in THREAD_TICKS])
+
+
 def plot_line(
     df: pd.DataFrame,
     x_col: str,
@@ -288,6 +298,7 @@ def plot_line(
     ax.set_title(title)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+    _apply_thread_ticks(ax, x_col)
     ax.grid(True, alpha=0.35)
     ax.legend()
 
@@ -360,6 +371,7 @@ def plot_scatter(
     ax.set_title(title)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+    _apply_thread_ticks(ax, x_col)
     ax.grid(True, alpha=0.35)
     ax.legend()
 
