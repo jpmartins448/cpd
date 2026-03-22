@@ -1,27 +1,29 @@
 # Parallel Matrix Multiplication Analysis (Part 2 – Exercises 1 and 2)
 
 ## 1. Introduction
-Part 2 analyzes OpenMP matrix multiplication with direct comparison of concrete implementations. In Exercise 1, the comparison is between OnMult - omp parallel for, OnMult - omp parallel + omp for, and OnMultLine - parallel with fixed 4 threads. In Exercise 2, the comparison is between OnMultLine variants using omp parallel for, omp parallel for collapse(2), and omp for simd while scaling threads from 4 to 24.
+In this part of the project, the goal is not only to see which line is higher or lower in the plots, but to explain why that happens for the actual implementations we wrote. Exercise 1 compares OnMult - omp parallel for, OnMult - omp parallel + omp for, and OnMultLine - parallel with a fixed thread count. Exercise 2 uses OnMultLine with omp parallel for, omp parallel for collapse(2), and omp for simd while increasing the number of threads.
 
-The goal is to explain why each implementation behaves as observed, based on its OpenMP structure: where parallel regions are created, how loop iterations are distributed, how much synchronization is introduced, and how thread-level overhead affects scalability.
+The main idea across all sections is to connect performance to OpenMP behavior in the code. That means looking at how threads are created, how loop iterations are split, when synchronization happens, and how much time is spent doing useful matrix multiplication versus runtime overhead.
 
 ## 2. Experimental Setup
-Exercise 1 runs with 4 threads and matrix sizes from 1024 to 3072, isolating implementation differences without changing thread count. Exercise 2 runs at fixed size 8192 and scales threads from 4 to 24 to evaluate thread scalability of omp parallel for, omp parallel for collapse(2), and omp for simd in OnMultLine.
+Exercise 1 was executed with 4 threads and matrix sizes from 1024 to 3072. This setup is useful because it keeps thread count constant and makes it easier to isolate differences caused by the OpenMP constructs in OnMult and OnMultLine.
 
-All measurements come from perf outputs, combining timing and hardware counters to interpret OpenMP overhead, thread utilization, and scaling saturation.
+Exercise 2 was executed with fixed matrix size 8192 and threads from 4 to 24. This setup is focused on scaling behavior of OnMultLine with omp parallel for, omp parallel for collapse(2), and omp for simd.
+
+All results come from perf outputs, including execution times and hardware counters. The interpretation below is based on those measurements and on how the OpenMP directives are used in each implementation.
 
 ## 3. Metrics Overview
-Execution time captures whether a parallel strategy converts hardware resources into actual wall-clock reduction.
+Execution time shows whether a given implementation actually reduces wall-clock runtime.
 
-GFLOPS measures sustained floating-point throughput and therefore how much useful arithmetic is delivered per unit time.
+GFLOPS shows how much useful floating-point work is sustained per second.
 
-Speedup indicates how much faster a parallel configuration runs relative to a baseline and is the primary indicator of practical scaling.
+Speedup compares a threaded run with the 4-thread baseline used in each Exercise 2 method.
 
-Efficiency normalizes speedup by thread growth, showing whether additional threads still contribute proportionally.
+Efficiency shows how much useful speedup each added thread still contributes.
 
-IPC (instructions per cycle) reflects how effectively cores are utilized during execution rather than stalled or underfed.
+IPC shows how effectively CPU cycles are converted into retired instructions.
 
-Cache miss rate provides context for whether memory-side pressure may be reinforcing or limiting observed parallel gains.
+Cache miss rate gives secondary context when we need to explain scaling changes.
 
 ## 4. Exercise 1 – Parallel Strategy Comparison
 
@@ -30,105 +32,107 @@ Cache miss rate provides context for whether memory-side pressure may be reinfor
 
 ![](plots_ex1/gflops_vs_size.png)
 
-The execution-time trend shows that OnMult - omp parallel for and OnMultLine - parallel stay ahead of OnMult - omp parallel + omp for as size increases. The same ordering is reflected in the GFLOPS plot, where the slower implementation also delivers lower throughput.
+The execution-time plot shows a clear ordering: OnMult - omp parallel for and OnMultLine - parallel stay ahead of OnMult - omp parallel + omp for as matrix size grows. The GFLOPS plot beside it supports the same result because the slower method is also the one with lower throughput.
 
-The main reason is the OpenMP structure used in OnMult. In OnMult - omp parallel for, thread-team creation and iteration distribution are combined in one directive, so loop work is dispatched directly with minimal control overhead. In OnMult - omp parallel + omp for, the split structure introduces extra runtime coordination and synchronization points around the work-sharing region, which increases non-compute cost. OnMultLine - parallel also benefits from a loop organization that keeps thread work steady enough that coordination cost does not dominate.
+The reason is directly related to how the OpenMP directives are used. In OnMult - omp parallel for, the runtime creates the parallel region and distributes iterations in one combined step, so threads move quickly into useful loop work. In OnMult - omp parallel + omp for, region creation and work-sharing are separated, which adds coordination and synchronization overhead around the parallel loop. OnMultLine - parallel keeps threads busy with stable work chunks and avoids spending too much time in runtime control.
 
-The implication is that OnMult - omp parallel for and OnMultLine - parallel convert a larger fraction of wall time into useful multiplication work, while OnMult - omp parallel + omp for pays a higher overhead tax per workload increase.
+The implication is that, with the same 4-thread budget, directive structure matters a lot: OnMult - omp parallel for and OnMultLine - parallel spend more time multiplying matrices, while OnMult - omp parallel + omp for loses more time in OpenMP management.
 
 ### 4.2 GFLOPS
 ![](plots_ex1/gflops_vs_size.png)
 
 ![](plots_ex1/version1_vs_version2_gflops.png)
 
-The GFLOPS plots show that OnMult - omp parallel for sustains higher throughput than OnMult - omp parallel + omp for, while OnMultLine - parallel remains competitive across sizes. The version-to-version comparison confirms that the gap is consistent rather than incidental.
+The GFLOPS plots show that OnMult - omp parallel for usually stays above OnMult - omp parallel + omp for, and OnMultLine - parallel remains strong across the tested sizes. The direct comparison between the two OnMult variants confirms that this is a stable behavior, not just a random fluctuation.
 
-This happens because GFLOPS penalizes runtime overhead directly: any time spent in synchronization or OpenMP control logic lowers effective floating-point throughput. OnMult - omp parallel for keeps this overhead lower by using a single combined parallel/work-sharing construct. OnMult - omp parallel + omp for introduces additional runtime handling around the separate directives, so threads spend more time outside arithmetic sections. OnMultLine - parallel keeps useful work density relatively high, which helps preserve throughput.
+The cause is simple: GFLOPS falls when threads spend time doing anything other than floating-point work. OnMult - omp parallel for has less directive overhead because it uses one combined OpenMP construct to launch and distribute work. OnMult - omp parallel + omp for adds extra control steps and synchronization around the loop, so more time is spent outside computation. OnMultLine - parallel keeps useful arithmetic density high enough to remain competitive.
 
-The implication is that the best GFLOPS in Exercise 1 comes from implementations where OpenMP directives map more directly to computation, especially OnMult - omp parallel for.
+The implication is that higher GFLOPS here means better conversion of thread time into real matrix operations, and that favors OnMult - omp parallel for and OnMultLine - parallel over OnMult - omp parallel + omp for.
 
 ### 4.3 Speedup
 ![](plots_ex1/speedup_vs_size.png)
 
-The speedup curve indicates that OnMult - omp parallel for and OnMultLine - parallel realize better parallel gains than OnMult - omp parallel + omp for over the size range tested. The weaker speedup of OnMult - omp parallel + omp for is persistent enough to be treated as a structural effect.
+The speedup plot again places OnMult - omp parallel for and OnMultLine - parallel above OnMult - omp parallel + omp for through most of the tested range. That means the same 4 threads are producing different levels of useful acceleration depending on the construct.
 
-The cause is that speedup is net acceleration after overhead. OnMult - omp parallel + omp for introduces more synchronization and runtime management around the work-sharing sequence, so part of the potential gain from 4 threads is consumed before useful multiply work completes. OnMult - omp parallel for avoids part of this cost by dispatching loop chunks in a single construct, and OnMultLine - parallel maintains competitive thread utilization under the same thread budget.
+This happens because speedup is measured after all overhead is included. OnMult - omp parallel + omp for spends extra time coordinating between parallel region handling and work-sharing, so part of the theoretical gain is consumed before useful work is done. OnMult - omp parallel for has a more direct path from thread launch to loop execution, and OnMultLine - parallel keeps thread participation more consistently useful.
 
-The implication is that in this project, speedup differences are primarily explained by OpenMP construct overhead, not by thread count or algorithmic intent alone.
+The implication is that speedup in Exercise 1 reflects quality of parallelization, not just number of threads, and the construct with less synchronization overhead wins.
 
 ### 4.4 IPC
 ![](plots_ex1/ipc_vs_size.png)
 
-The IPC behavior is consistent with the performance ordering: OnMult - omp parallel for and OnMultLine - parallel tend to maintain stronger effective instruction retirement than OnMult - omp parallel + omp for. Where IPC is lower, execution also tends to show weaker speedup/GFLOPS.
+The IPC plot follows the same ranking trend seen in time and GFLOPS: OnMult - omp parallel for and OnMultLine - parallel generally keep better effective IPC than OnMult - omp parallel + omp for. Where IPC is weaker, performance is usually weaker too.
 
-This is expected from the directive structure. OnMult - omp parallel + omp for introduces more runtime control and synchronization exposure, which can leave cores spending more cycles in less productive phases. OnMult - omp parallel for keeps the loop distribution path tighter, so threads spend more cycles in compute-dense sections. OnMultLine - parallel also benefits when thread work remains consistently occupied.
+The reason is that lower IPC often appears when cores spend more cycles waiting or doing low-value control work. OnMult - omp parallel + omp for includes more runtime handling and synchronization around loop scheduling, so cores can spend a larger share of cycles outside dense arithmetic regions. OnMult - omp parallel for and OnMultLine - parallel keep threads closer to useful computation, which helps maintain instruction retirement.
 
-The implication is that IPC supports the same conclusion as time and speedup: OnMult - omp parallel for and OnMultLine - parallel convert thread activity into useful execution more effectively than OnMult - omp parallel + omp for.
+The implication is that IPC is not just a side metric here; it confirms that OnMult - omp parallel for and OnMultLine - parallel use CPU cycles more productively than OnMult - omp parallel + omp for.
 
 ### 4.5 Short Cache Note
 ![](plots_ex1/cache_miss_rate_vs_size.png)
 
-The cache-miss plot changes with size for all implementations, but it does not cleanly explain why OnMult - omp parallel for and OnMultLine - parallel outperform OnMult - omp parallel + omp for. The main ranking is better aligned with OpenMP overhead differences than with cache-miss separation alone.
+The cache-miss plot changes with problem size for OnMult - omp parallel for, OnMult - omp parallel + omp for, and OnMultLine - parallel, but the separation is not strong enough to fully explain the performance ranking by itself. The main ordering in runtime and GFLOPS lines up more clearly with OpenMP overhead differences.
 
-Because Exercise 1 keeps threads fixed, this graph is informative but not decisive. The implication is that the primary causal driver remains directive-level runtime overhead, while cache effects should be interpreted as secondary context.
+Because Exercise 1 keeps thread count fixed, this graph should be read carefully and not over-interpreted. It gives useful context, but it does not provide a stronger explanation than the construct-level overhead we see between OnMult - omp parallel for and OnMult - omp parallel + omp for.
+
+The implication is that cache effects exist, but in this part they are secondary; the primary explanation is still how each implementation manages threads and synchronization.
 
 ### 4.6 Strategy Comparison
 ![](plots_ex1/version1_strategy_comparison_gflops.png)
 
-The direct comparison confirms that OnMult - omp parallel for is consistently ahead of OnMult - omp parallel + omp for in throughput-oriented behavior. OnMultLine - parallel remains a strong reference in the same exercise context.
+This direct comparison highlights the central result of Exercise 1: OnMult - omp parallel for is consistently stronger than OnMult - omp parallel + omp for, and the broader set of graphs shows OnMultLine - parallel also performing well in the same environment.
 
-The cause is explicit in code structure: omp parallel for creates one parallel region and distributes iterations immediately, reducing directive transition overhead. The omp parallel + omp for variant separates region creation and work-sharing, which increases runtime coordination and can introduce extra synchronization boundaries that are not offset by extra useful work in this kernel.
+The reason is explicit in the directive design. In OnMult - omp parallel for, a single OpenMP construct handles thread team creation and loop distribution together, which avoids extra transitions. In OnMult - omp parallel + omp for, the split between region creation and work-sharing introduces additional runtime coordination and synchronization costs that do not produce extra useful matrix work.
 
-The implication is that OnMult - omp parallel for is the better OpenMP choice in Exercise 1 because its construct-level overhead is lower for this matrix multiplication pattern.
+The implication is practical and clear: for this kernel, OnMult - omp parallel for is the better construct choice than OnMult - omp parallel + omp for when the goal is to maximize useful work under fixed threads.
 
 ## 5. Exercise 2 – Thread Scaling Analysis
 
 ### 5.1 Execution Time vs Threads
 ![](plots_ex2/execution_time_vs_threads.png)
 
-The execution-time plot shows that all three OnMultLine variants improve from 4 threads to higher counts, but the gains are strongest early and weaker later. The comparison between omp parallel for, omp parallel for collapse(2), and omp for simd indicates that their scaling trajectories diverge as thread count grows.
+The execution-time plot shows that all three OnMultLine variants improve when moving from 4 threads upward, but the biggest gains happen early. As threads continue to increase, omp parallel for, omp parallel for collapse(2), and omp for simd all show slower improvement, which is a classic sign of diminishing returns.
 
-This pattern is expected from the OpenMP constructs. At low-to-mid thread counts, each added thread removes a large amount of remaining parallel work. At higher thread counts, omp parallel for and omp parallel for collapse(2) face increasing scheduling and synchronization overhead, while omp for simd can still benefit from stronger per-thread vectorized compute but is not immune to thread coordination cost. As concurrency rises, shared-resource contention limits how much additional wall-clock reduction each new thread can provide.
+The cause comes from thread scaling mechanics. At lower thread counts, adding threads directly increases useful parallel work. At higher counts, each method pays more overhead in scheduling and synchronization. For omp parallel for collapse(2), the larger flattened iteration space can improve distribution but also adds scheduling pressure. For omp for simd, vectorization can boost per-thread computation, but it does not remove team-level coordination costs. Shared resources also become more contested as thread count rises.
 
-The implication is that thread scaling quality depends on how each construct balances extra parallel workers against extra runtime overhead, not on thread count alone.
+The implication is that runtime scaling should be judged by marginal gains: these methods all improve with threads, but only up to the point where overhead growth starts to dominate benefit growth.
 
 ### 5.2 Speedup vs Threads
 ![](plots_ex2/speedup_vs_threads.png)
 
-The speedup curves are sub-linear for omp parallel for, omp parallel for collapse(2), and omp for simd, with visible saturation in the higher-thread region. None of the three methods follows ideal linear scaling once thread count becomes large.
+The speedup plot shows that omp parallel for, omp parallel for collapse(2), and omp for simd all stay below the ideal linear trend as threads increase. The curves rise, but the slope becomes smaller in the higher-thread region, indicating saturation.
 
-The cause is a combination of OpenMP overhead and resource contention. omp parallel for pays growing coordination cost as the team grows; omp parallel for collapse(2) expands iteration-space distribution, which can improve balance but also adds scheduling pressure; omp for simd improves compute density inside each thread, yet thread-level synchronization and runtime overhead still prevent linear growth. As a result, each additional thread contributes less incremental speedup than earlier additions.
+This happens because linear speedup assumes almost zero overhead, which is not realistic in OpenMP thread teams at high concurrency. omp parallel for accumulates more coordination cost as the team grows. omp parallel for collapse(2) can improve load distribution by exposing more loop iterations, but this also increases scheduling work. omp for simd can improve computation inside each thread, yet thread synchronization and resource contention still limit total scaling.
 
-The implication is that saturation is a structural property of these implementations under this hardware context, and high thread counts should be evaluated by marginal gain rather than ideal scaling expectations.
+The implication is that adding threads remains useful only while incremental speedup is meaningful; after saturation starts, thread increases give smaller and smaller practical benefits.
 
 ### 5.3 Efficiency vs Threads
 ![](plots_ex2/efficiency_vs_threads.png)
 
-Efficiency falls for omp parallel for, omp parallel for collapse(2), and omp for simd as threads increase, even where execution time still decreases. This indicates that parallel gains continue, but each new thread contributes less than proportional ideal scaling.
+Efficiency decreases for omp parallel for, omp parallel for collapse(2), and omp for simd as thread count increases. Even in ranges where execution time still improves, each additional thread contributes less than the previous ones.
 
-This decline happens because thread growth amplifies non-compute costs in all three constructs. omp parallel for and omp parallel for collapse(2) both accumulate more synchronization and scheduling overhead at scale, while omp for simd, despite better per-thread arithmetic throughput, still pays thread-management overhead that grows with team size.
+The reason is that efficiency captures how much useful acceleration we get per thread. As teams get larger, all three methods spend a bigger fraction of runtime on synchronization, scheduling, and contention-related waiting. omp for simd can keep per-thread compute stronger than non-simd variants in some ranges, but it still cannot avoid thread-team overhead entirely.
 
-The implication is that the most scalable method is the one whose efficiency decays slowest, not necessarily the one with the largest absolute thread count.
+The implication is that efficiency is a practical warning signal: the best operating point is not always the highest thread count, but the point where added threads still return enough useful acceleration.
 
 ### 5.4 GFLOPS vs Threads
 ![](plots_ex2/gflops_vs_threads.png)
 
 ![](plots_ex2/gflops_vs_threads_scatter.png)
 
-GFLOPS increases sharply at first for omp parallel for, omp parallel for collapse(2), and omp for simd, then trends toward a plateau where additional threads produce smaller throughput gains. The scatter confirms that higher threads do not automatically map to proportionally higher GFLOPS.
+The GFLOPS plot shows the same overall scaling pattern for omp parallel for, omp parallel for collapse(2), and omp for simd: throughput rises strongly at first, then begins to flatten. The scatter view confirms that moving to higher threads does not always produce equivalent throughput gains.
 
-The reason differs slightly by method. omp parallel for has straightforward work-sharing and scales well initially but eventually loses marginal throughput to coordination and contention. omp parallel for collapse(2) can improve distribution granularity across nested loops, which may help utilization in some regions, but added scheduling complexity can offset that benefit at higher threads. omp for simd improves per-thread compute intensity through vectorization, which can raise GFLOPS early, yet global throughput still plateaus when thread-level overhead and shared-resource contention dominate.
+The cause depends on each construct. omp parallel for gives direct loop distribution and scales well initially, but eventually overhead and contention reduce marginal throughput. omp parallel for collapse(2) increases available iteration chunks by collapsing nested loops, which can improve distribution at some thread counts, but that extra scheduling complexity can also limit gains later. omp for simd raises per-thread arithmetic density through vector instructions, often helping early throughput, yet total GFLOPS still plateaus when team-level overhead dominates.
 
-The implication is that omp for simd can improve per-thread compute effectiveness, but long-range scalability is still determined by OpenMP coordination cost across the full thread team.
+The implication is that omp for simd can improve computation quality inside each thread, but overall scalability still depends on OpenMP coordination behavior across the entire thread team.
 
 ### 5.5 IPC vs Threads
 ![](plots_ex2/ipc_vs_threads.png)
 
-IPC does not scale linearly with thread count for omp parallel for, omp parallel for collapse(2), or omp for simd, and high-thread regions show weaker per-cycle effectiveness than low-thread regions. This aligns with the speedup and efficiency saturation behavior.
+The IPC plot shows that omp parallel for, omp parallel for collapse(2), and omp for simd do not keep increasing instruction efficiency as threads grow. In higher-thread regions, IPC behavior is flatter or weaker, which matches the slowdown in speedup growth.
 
-The cause is that more threads increase synchronization frequency, runtime scheduling activity, and pressure on shared execution resources. omp for simd can retain stronger compute density within each thread, but team-level contention still limits IPC growth. omp parallel for collapse(2) may improve work distribution in nested loops, yet it also introduces overhead that can dilute instruction retirement effectiveness at scale.
+This happens because high thread counts increase synchronization and runtime coordination, so cores spend more cycles in less productive states. omp for simd can help each thread execute arithmetic more efficiently, but team-level overhead and shared-resource pressure still reduce IPC improvement at scale. omp parallel for collapse(2) may improve load splitting, yet it can also add enough scheduling cost to limit IPC gains.
 
-The implication is that IPC confirms a central scaling limit in Exercise 2: additional threads increase total activity, but not proportionally productive activity.
+The implication is that IPC confirms what the scaling plots already suggest: more threads can increase total work done, but they do not guarantee better per-cycle productivity.
 
 ### 5.6 Advanced Scaling Insights
 ![](plots_ex2/user_time_vs_threads.png)
@@ -143,30 +147,30 @@ The implication is that IPC confirms a central scaling limit in Exercise 2: addi
 
 ![](plots_ex2/elapsed_vs_user_time_scatter.png)
 
-Across these graphs, omp parallel for, omp parallel for collapse(2), and omp for simd all show the same high-level pattern: total CPU work rises with thread count while marginal wall-clock benefit shrinks. user_time_vs_threads and user_cpu_ratio_vs_threads indicate that higher-thread runs consume significantly more aggregate CPU time, even when elapsed-time improvements become modest.
+These advanced plots make one trend very clear for omp parallel for, omp parallel for collapse(2), and omp for simd: total CPU effort grows faster than practical speed benefit in the high-thread region. user_time_vs_threads and user_cpu_ratio_vs_threads show that we spend much more aggregate user CPU time as threads increase, even when elapsed-time improvements are already getting small.
 
-The incremental metrics explain why this happens. incremental_speedup_gain_vs_threads and incremental_time_reduction_pct_vs_threads show that each thread increment contributes less acceleration than the previous one, revealing explicit diminishing returns. gflops_per_thread_vs_threads adds the same message at thread granularity: per-thread productivity declines as the team grows because OpenMP coordination overhead and shared-resource contention absorb a larger fraction of execution. elapsed_vs_user_time_scatter visualizes the trade-off directly: improved elapsed time increasingly requires disproportionately higher user CPU effort.
+The detailed cause appears in the marginal metrics. incremental_speedup_gain_vs_threads and incremental_time_reduction_pct_vs_threads show that each new thread block gives less extra acceleration than the previous one. gflops_per_thread_vs_threads tells the same story from a per-thread angle: as the team gets larger, each thread contributes less throughput because coordination and contention eat a larger part of runtime. elapsed_vs_user_time_scatter summarizes this trade-off visually, showing that better elapsed time requires disproportionately higher total CPU effort in the saturated range.
 
-The implication is that the practical scaling limit for omp parallel for, omp parallel for collapse(2), and omp for simd is identified by marginal gain collapse, not by the highest absolute thread count.
+The implication is that the useful scaling limit should be chosen where marginal gain is still strong. After that point, omp parallel for, omp parallel for collapse(2), and omp for simd may still improve runtime slightly, but with poor cost-effectiveness per added thread.
 
 ### 5.7 Strategy Comparison
 ![](plots_ex2/speedup_vs_ipc_scatter.png)
 
-The speedup-versus-IPC scatter separates omp parallel for, omp parallel for collapse(2), and omp for simd into different trade-off regions rather than a single dominant line. This indicates that each implementation balances instruction-level effectiveness and thread-level scaling differently.
+The speedup-versus-IPC scatter shows that omp parallel for, omp parallel for collapse(2), and omp for simd occupy different trade-off regions instead of collapsing into one common trend. That means each construct combines instruction-level efficiency and thread-level scaling in a different way.
 
-The cause is rooted in construct behavior. omp parallel for provides a stable baseline with low directive overhead. omp parallel for collapse(2) can distribute nested-loop iterations more broadly, which may help balance but can also increase scheduling overhead. omp for simd can improve arithmetic throughput inside each thread via vectorization, but overall speedup still depends on synchronization and contention across the OpenMP team.
+The reason is tied to directive behavior. omp parallel for is a strong baseline because it keeps launch and work-sharing overhead relatively low. omp parallel for collapse(2) can improve work distribution by expanding the iteration space, but this can come with extra scheduling overhead. omp for simd improves per-thread arithmetic efficiency through vectorization, but global speedup still depends on synchronization and contention across the full OpenMP team.
 
-Because point clusters may overlap in parts of the plot, some pairwise conclusions should be interpreted cautiously. The implication remains concrete: the best implementation is the one that keeps both IPC and speedup high simultaneously across the scaled thread range.
+The implication is that the best method is not just the one with high IPC or high speedup alone, but the one that keeps both high at the same time across the useful thread range. Where points are close, conclusions should stay cautious.
 
 ## 6. Discussion
-Exercise 1 shows that OnMult - omp parallel for and OnMultLine - parallel achieve better performance than OnMult - omp parallel + omp for primarily because of lower OpenMP coordination overhead under the same 4-thread budget. The code-level directive choice changes how much runtime is spent in useful multiplication versus synchronization and runtime control.
+Exercise 1 shows that OnMult - omp parallel for and OnMultLine - parallel are more effective than OnMult - omp parallel + omp for under the same 4-thread setup. The key reason is not algorithm name, but directive behavior: OnMult - omp parallel + omp for pays more coordination and synchronization overhead before useful work is completed.
 
-Exercise 2 shows that omp parallel for, omp parallel for collapse(2), and omp for simd all experience diminishing returns as threads increase. The key difference is not whether they scale at all, but how quickly marginal gain declines once overhead and contention become comparable to useful work.
+Exercise 2 shows that omp parallel for, omp parallel for collapse(2), and omp for simd all scale at first and then move into diminishing returns. The important difference between them is how quickly marginal speedup drops and how much extra CPU effort is required for small runtime gains.
 
-The practical conclusion is implementation-specific: choose the OpenMP construct that preserves useful-work density for this kernel, then stop increasing threads when incremental speedup and incremental time reduction indicate saturation.
+The practical lesson is straightforward: use the construct that keeps useful work high and overhead low, and choose thread count based on incremental benefit, not only on maximum available threads.
 
 ## 7. Conclusion
-In this project, OnMult - omp parallel for and OnMultLine - parallel outperform OnMult - omp parallel + omp for in Exercise 1 because their OpenMP structure spends less time in coordination overhead.  
-In Exercise 2, omp parallel for, omp parallel for collapse(2), and omp for simd all improve performance at first but eventually hit diminishing returns as synchronization and contention grow.  
-collapse(2) and simd can provide benefits in specific regions, but neither removes the fundamental saturation limit of thread scaling.  
-The best practical choice is the implementation that maintains the highest useful-work-to-overhead ratio across the target thread range.
+In this project, OnMult - omp parallel for and OnMultLine - parallel perform better than OnMult - omp parallel + omp for in Exercise 1 because they spend less runtime in OpenMP overhead.  
+In Exercise 2, omp parallel for, omp parallel for collapse(2), and omp for simd all improve performance early, but all of them hit diminishing returns as thread coordination and contention increase.  
+collapse(2) and simd can help in specific regions, but they do not remove saturation at high thread counts.  
+The best practical configuration is the one that keeps the best useful-work-to-overhead balance and still gives strong marginal gains when threads are added.
