@@ -15,3 +15,6 @@ L1-dcache-loads,L1-dcache-load-misses,\
 LLC-loads,LLC-load-misses,\
 stalled-cycles-backend \
 ./a.out -->
+
+See report of part 1 of this project in assign1/src/Part_1_Report.pdf
+See report of part 2 of this project in assign2/src/Part_2_Report.pdf
