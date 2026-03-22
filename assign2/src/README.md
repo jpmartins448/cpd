@@ -1,5 +1,28 @@
 # Parallel Matrix Multiplication Analysis (Part 2 – Exercises 1 and 2)
 
+## Index
+1. Parallel Matrix Multiplication Analysis (Part 2 – Exercises 1 and 2)
+2. Introduction
+3. Experimental Setup
+4. Metrics Overview
+5. Exercise 1 – Parallel Strategy Comparison
+	5.1 Execution Time
+	5.2 GFLOPS
+	5.3 Speedup
+	5.4 IPC
+	5.5 Short Cache Note
+	5.6 Strategy Comparison
+6. Exercise 2 – Thread Scaling Analysis
+	6.1 Execution Time vs Threads
+	6.2 Speedup vs Threads
+	6.3 Efficiency vs Threads
+	6.4 GFLOPS vs Threads
+	6.5 IPC vs Threads
+	6.6 Advanced Scaling Insights
+	6.7 Strategy Comparison
+7. Discussion
+8. Conclusion
+
 ## 1. Introduction
 In this part of the project, the goal is not only to see which line is higher or lower in the plots, but to explain why that happens for the actual implementations we wrote. Exercise 1 compares OnMult - omp parallel for, OnMult - omp parallel + omp for, and OnMultLine - parallel with a fixed thread count. Exercise 2 uses OnMultLine with omp parallel for, omp parallel for collapse(2), and omp for simd while increasing the number of threads.
 
