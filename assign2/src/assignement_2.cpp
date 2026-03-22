@@ -84,7 +84,7 @@ void OnMultLine(int m_ar, int m_br)
 
     double start = omp_get_wtime();
 
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for
     for (int i = 0; i < m_ar; i++) {
         for (int k = 0; k < m_ar; k++) {
             double temp = pha[i*m_ar + k];  // private to each thread

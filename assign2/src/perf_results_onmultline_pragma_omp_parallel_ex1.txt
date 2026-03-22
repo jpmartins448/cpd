@@ -1,37 +1,37 @@
-======================================
-Method: OnMultLine | Size: 1024x1024 | Threads: 4
-======================================
-Parallel Time: 0.0961171 s
-Result matrix: 
-524800 524800 524800 524800 524800 524800 524800 524800 524800 524800 
+  ======================================
+  Method: OnMultLine | Size: 1024x1024 | Threads: 4
+  ======================================
+  Parallel Time: 0.0961171 s
+  Result matrix: 
+  524800 524800 524800 524800 524800 524800 524800 524800 524800 524800 
 
- Performance counter stats for './assignement_2 2 1024':
+  Performance counter stats for './assignement_2 2 1024':
 
-     1,278,195,230      cpu_atom/cycles/                                                        (5.57%)
-     1,688,324,152      cpu_core/cycles/                                                        (46.07%)
-     4,078,120,070      cpu_atom/instructions/           #    3.19  insn per cycle              (5.57%)
-     8,972,712,572      cpu_core/instructions/           #    5.31  insn per cycle              (55.48%)
-        63,088,848      cpu_atom/cache-references/                                              (5.57%)
-       142,515,269      cpu_core/cache-references/                                              (64.90%)
-         1,975,230      cpu_atom/cache-misses/           #    3.13% of all cache refs           (5.57%)
-           743,833      cpu_core/cache-misses/           #    0.52% of all cache refs           (74.90%)
-     1,012,109,116      cpu_atom/L1-dcache-loads/                                               (5.57%)
-     2,234,394,072      cpu_core/L1-dcache-loads/                                               (75.60%)
-   <not supported>      cpu_atom/L1-dcache-load-misses/                                       
-        37,348,325      cpu_core/L1-dcache-load-misses/  #    1.67% of all L1-dcache accesses   (76.07%)
-         4,629,490      cpu_atom/LLC-loads/                                                     (5.57%)
-         1,624,129      cpu_core/LLC-loads/                                                     (76.12%)
-             4,056      cpu_atom/LLC-load-misses/        #    0.09% of all LL-cache accesses    (5.57%)
-            44,527      cpu_core/LLC-load-misses/        #    2.74% of all LL-cache accesses    (76.12%)
-   <not supported>      cpu_atom/stalled-cycles-backend/                                      
-   <not supported>      cpu_core/stalled-cycles-backend/                                      
-        38,219,270      cpu_core/mem_load_retired.l1_miss/                                        (37.14%)
-         1,562,740      cpu_core/mem_load_retired.l2_miss/                                        (36.67%)
+      1,278,195,230      cpu_atom/cycles/                                                        (5.57%)
+      1,688,324,152      cpu_core/cycles/                                                        (46.07%)
+      4,078,120,070      cpu_atom/instructions/           #    3.19  insn per cycle              (5.57%)
+      8,972,712,572      cpu_core/instructions/           #    5.31  insn per cycle              (55.48%)
+          63,088,848      cpu_atom/cache-references/                                              (5.57%)
+        142,515,269      cpu_core/cache-references/                                              (64.90%)
+          1,975,230      cpu_atom/cache-misses/           #    3.13% of all cache refs           (5.57%)
+            743,833      cpu_core/cache-misses/           #    0.52% of all cache refs           (74.90%)
+      1,012,109,116      cpu_atom/L1-dcache-loads/                                               (5.57%)
+      2,234,394,072      cpu_core/L1-dcache-loads/                                               (75.60%)
+    <not supported>      cpu_atom/L1-dcache-load-misses/                                       
+          37,348,325      cpu_core/L1-dcache-load-misses/  #    1.67% of all L1-dcache accesses   (76.07%)
+          4,629,490      cpu_atom/LLC-loads/                                                     (5.57%)
+          1,624,129      cpu_core/LLC-loads/                                                     (76.12%)
+              4,056      cpu_atom/LLC-load-misses/        #    0.09% of all LL-cache accesses    (5.57%)
+              44,527      cpu_core/LLC-load-misses/        #    2.74% of all LL-cache accesses    (76.12%)
+    <not supported>      cpu_atom/stalled-cycles-backend/                                      
+    <not supported>      cpu_core/stalled-cycles-backend/                                      
+          38,219,270      cpu_core/mem_load_retired.l1_miss/                                        (37.14%)
+          1,562,740      cpu_core/mem_load_retired.l2_miss/                                        (36.67%)
 
-       0.104379771 seconds time elapsed
+        0.104379771 seconds time elapsed
 
-       0.369333000 seconds user
-       0.013974000 seconds sys
+        0.369333000 seconds user
+        0.013974000 seconds sys
 
 
 
